@@ -1,0 +1,2 @@
+class Baseballcliapiversion::Games
+end

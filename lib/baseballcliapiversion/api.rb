@@ -5,7 +5,6 @@ class Baseballcliapiversion::Api
       resp = HTTParty.get("https://api.mysportsfeeds.com/v1.2/pull/mlb/current/daily_game_schedule.json?fordate=#{date}", {
           header: {Authorization: Basic {"#{ENV[MySportsFeedCredentials]}"}}
     })
+    resp
     end
 end
-
-Baseballcliapiversion::Api.new.get_games
