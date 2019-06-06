@@ -36,8 +36,28 @@ class Baseballcliapiversion::Api
       hash[:away_innings] << inning.xpath('gam:awayScore').text.to_i
       hash[:home_innings] << inning.xpath('gam:homeScore').text.to_i
     end
+    away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
+    home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
+    hash[:away_sts] = team_stats(away_stats)
+    hash[:home_sts] = team_stats(home_stats)
     hash
   end
+
+  def self.team_stats(nokofile)
+    {:hits => nokofile.xpath('gam:Hits').text,
+     :doubles => nokofile.xpath('gam:SecondBaseHits').text,
+     :triples => nokofile.xpath('gam:ThirdBaseHits').text,
+     :homers => nokofile.xpath('gam:HomeRuns').text,
+     :rbis => nokofile.xpath('gam:RunsBattedIn').text,
+     :steals => nokofile.xpath('gam:StolenBases').text,
+     :team_avg => nokofile.xpath('gam:BattingAvg').text,
+     :team_ops => nokofile.xpath('gam:BatterOnBasePlusSluggingPct').text,
+     :pitchks => nokofile.xpath('gam:PitcherStrikeouts').text,
+     :teamera => nokofile.xpath('gam:EarnedRunsAllowed').text,
+     :teampip => nokofile.xpath('gam:PitchesPerInning').text
+    }
+  end
+  
   def self.send_request(path)
 
     uri = URI(path)
