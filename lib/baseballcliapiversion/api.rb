@@ -31,7 +31,7 @@ class Baseballcliapiversion::Api
       }
     end
   end
-  
+
   def self.send_request(path)
 
     uri = URI(path)
@@ -44,7 +44,7 @@ class Baseballcliapiversion::Api
     # Create Request
     req =  Net::HTTP::Get.new(uri)
     # Add headers
-    req.basic_auth("b99e7738-3a77-40ef-8dca-a7f62d", "Gc2kw3hcRVreqWy")
+    req.basic_auth("#{ENV[Sportsfeed_key]}", "#{ENV[Sportsfeed_pw]}")
 
     # Fetch Request
     res = http.request(req).body
