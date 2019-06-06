@@ -23,15 +23,21 @@ class Baseballcliapiversion::Api
   end
 
   def self.game_hash(noko)
-    noko.xpath('gam:gameboxscore').collect do |game|
-      {
-        :id => game.xpath('gam:game').xpath('gam:ID').text,
-        :away_team => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
-        :home_team => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text
-      }
-    end
-  end
+    game = noko.xpath('gam:gameboxscore')
+    hash = {
+      :id => game.xpath('gam:game').xpath('gam:id').text,
+      :away_team => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
+      :home_team => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
+      :away_innings => [],
+      :home_innings => [],
 
+    }
+    game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
+      hash[:away_innings] << inning.xpath('gam:awayScore').text.to_i
+      hash[:home_innings] << inning.xpath('gam:homeScore').text.to_i
+    end
+    hash
+  end
   def self.send_request(path)
 
     uri = URI(path)
