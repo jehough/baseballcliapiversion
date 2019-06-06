@@ -7,23 +7,19 @@ class Baseballcliapiversion::Api
     send_request(path)
   end
 
-  def self.game_hash
+  def self.game_ids
     games = get_games
     games_array = games.xpath('scor:scoreboard').xpath('scor:gameScore').collect do |game|
-      {:id => game.xpath('scor:game').xpath('scor:ID').text,
-      :away_team => game.xpath('scor:game').xpath('scor:awayTeam').xpath('scor:Name').text,
-      :home_team => game.xpath('scor:game').xpath('scor:homeTeam').xpath('scor:Name').text,
-      :home_final => game.xpath('scor:homeScore').text,
-      :away_final => game.xpath('scor:awayScore').text,
-      }
+      game.xpath('scor:game').xpath('scor:ID').text
     end
   end
 
-  def self.get_box
-    game_hash.each do |game|
+  def self.get_boxes
+    boxes_hash = game_ids.collect do |game|
       game_id = game[:id]
       path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/current/game_boxscore.xml?gameid=#{game_id}"
       noko = send_request(path)
+      game_hash(noko)
     end
   end
 
