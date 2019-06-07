@@ -1,5 +1,5 @@
 class Baseballcliapiversion::Game
-    attr_accessor :game_id, :home_team, :away_team
+    attr_accessor :game_id, :home_team, :away_team, :name
     @@all
     def initialize (game_id)
         @game_id = game_id
@@ -22,9 +22,11 @@ class Baseballcliapiversion::Game
             @home_team = Baseballcliapiversion::Team.create_from_hash(home)
             @away_team.game_id = game
             @home_team.game_id = game
+            game.name = @away_team.name + " vs " @home_team.name
         end
     end
     
+
     def save
         self.class.all << self
     end

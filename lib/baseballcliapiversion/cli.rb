@@ -24,6 +24,10 @@ class Baseballcliapiversion::Cli
     end
 
     def list_games
+        Baseballcliapiversion::Game.all.each_with_index do |game, i|
+            puts (i + 1).to_s + ". #{game.name}"
+        end
+    end
 
     
 end
