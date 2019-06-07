@@ -1,5 +1,5 @@
 class Baseballcliapiversion::Player
-    attr_accessor :name, 
+    attr_accessor :name, :at_bats, :hits, :runs, :rbis, :bb, :k, :ip, :hits_allowed, :runs_allowed, :earned_runs, :walk_allowed, :SO, :hr_allowed
     @@all = []
 
     def self.create_from_hash(player_hash)
