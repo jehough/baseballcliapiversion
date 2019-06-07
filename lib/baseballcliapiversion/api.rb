@@ -66,19 +66,19 @@ end
 def self.game_hash(noko)
   game = noko.xpath('gam:gameboxscore')
   hash = {
-    :away_team => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
-    :home_team => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
-    :away_innings => [],
-    :home_innings => [],
+    :away_team => {:name => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
+    :away_innings => []},
+    :home_team => {:name => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
+    :home_innings => []}
   }
   game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
-    hash[:away_innings] << inning.xpath('gam:awayScore').text.to_i
-    hash[:home_innings] << inning.xpath('gam:homeScore').text.to_i
+    hash[:away_team][:away_innings] << inning.xpath('gam:awayScore').text.to_i
+    hash[:home_team][:home_innings] << inning.xpath('gam:homeScore').text.to_i
   end
   away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
   home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
-  hash[:away_sts] = team_stats(away_stats)
-  hash[:home_sts] = team_stats(home_stats)
+  hash[:away_team][:away_sts] = team_stats(away_stats)
+  hash[:home_team][:home_sts] = team_stats(home_stats)
   hash
 end
 
