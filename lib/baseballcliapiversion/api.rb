@@ -1,81 +1,121 @@
 class Baseballcliapiversion::Api
 
-  def self.get_games
-    d = Time.now - 86400
-    date = d.strftime('%Y%m%d')
-    path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/2019-regular/scoreboard.xml?fordate=#{date}"
-    send_request(path)
+# Request (GET )
+def self.get_games
+  d = Time.now - 86400
+  date = d.strftime('%Y%m%d')
+  path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/2019-regular/scoreboard.xml?fordate=20190605"
+  send_request(path)
+end
+
+def self.game_ids
+  games = get_games
+  games_array = games.xpath('scor:scoreboard').xpath('scor:gameScore').collect do |game|
+    game.xpath('scor:game').xpath('scor:ID').text
   end
+end
 
-  def self.game_ids
-    games = get_games
-    games_array = games.xpath('scor:scoreboard').xpath('scor:gameScore').collect do |game|
-      game.xpath('scor:game').xpath('scor:ID').text
-    end
-  end
+def self.get_players(game_id)
+    path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/current/game_boxscore.xml?gameid=#{game_id}"
+    noko = send_request(path)
+    player_hash(noko)
+end
 
-  def self.get_boxes
-    boxes_hash = game_ids.collect do |game|
-      path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/current/game_boxscore.xml?gameid=#{game}"
-      noko = send_request(path)
-      game_hash(noko)
-    end
-  end
-
-  def self.game_hash(noko)
-    game = noko.xpath('gam:gameboxscore')
-    hash = {
-      :id => game.xpath('gam:game').xpath('gam:id').text,
-      :away_team => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
-      :home_team => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
-      :away_innings => [],
-      :home_innings => [],
-
+def self.player_hash(noko)
+  away_team = noko.xpath('gam:gameboxscore').xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text
+  home_team = noko.xpath('gam:gameboxscore').xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text
+    hash = {"#{away_team}" => [],
+    "#{home_team}" => []
     }
-    game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
-      hash[:away_innings] << inning.xpath('gam:awayScore').text.to_i
-      hash[:home_innings] << inning.xpath('gam:homeScore').text.to_i
+    noko.xpath('gam:gameboxscore').xpath('gam:awayTeam').xpath('gam:awayPlayers').xpath('gam:playerEntry').each do |player|
+      player_stats = create_player_hash(player)
+      hash["#{away_team}"] << player_stats
     end
-    away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
-    home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
-    hash[:away_sts] = team_stats(away_stats)
-    hash[:home_sts] = team_stats(home_stats)
-    hash
-  end
+    noko.xpath('gam:gameboxscore').xpath('gam:homeTeam').xpath('gam:homePlayers').xpath('gam:playerEntry').each do |player|
+      player_stats = create_player_hash(player)
+      hash["#{home_team}"] << player_stats
+    end
+  hash
+end
 
-  def self.team_stats(nokofile)
-    {:hits => nokofile.xpath('gam:Hits').text,
-     :doubles => nokofile.xpath('gam:SecondBaseHits').text,
-     :triples => nokofile.xpath('gam:ThirdBaseHits').text,
-     :homers => nokofile.xpath('gam:HomeRuns').text,
-     :rbis => nokofile.xpath('gam:RunsBattedIn').text,
-     :steals => nokofile.xpath('gam:StolenBases').text,
-     :team_avg => nokofile.xpath('gam:BattingAvg').text,
-     :team_ops => nokofile.xpath('gam:BatterOnBasePlusSluggingPct').text,
-     :pitchks => nokofile.xpath('gam:PitcherStrikeouts').text,
-     :teamera => nokofile.xpath('gam:EarnedRunsAllowed').text,
-     :teampip => nokofile.xpath('gam:PitchesPerInning').text
-    }
+def self.create_player_hash(player)
+  player_stats = {:name =>  player.xpath('gam:player').xpath('gam:FirstName').text + " " + player.xpath('gam:player').xpath('gam:LastName').text,
+        :at_bats => player.xpath('gam:stats').xpath('gam:AtBats').text,
+        :hits => player.xpath('gam:stats').xpath('gam:Hits').text,
+        :runs => player.xpath('gam:stats').xpath('gam:Runs').text,
+        :rbi => player.xpath('gam:stats').xpath('gam:RunsBattedIn').text,
+        :bb => player.xpath('gam:stats').xpath('gam:BatterWalks').text,
+        :k => player.xpath('gam:stats').xpath('gam:BatterStrikeouts').text,
+        :ip => player.xpath('gam:stats').xpath('gam:InningsPitched').text, 
+        :hits_allowed => player.xpath('gam:stats').xpath('gam:HitsAllowed').text,
+        :runs_allowed => player.xpath('gam:stats').xpath('gam:RunsAllowed').text,
+        :earned_runs => player.xpath('gam:stats').xpath('gam:EarnedRunsAllowed').text,
+        :walks_allowed => player.xpath('gam:stats').xpath('gam:PitcherWalks').text,
+        :SO => player.xpath('gam:stats').xpath('gam:PitcherStrikeouts').text,
+        :hr_allowed => player.xpath('gam:stats').xpath('gam:HomerunsAllowed').text,
+      }
+end
+
+def self.get_boxes(game_id)
+    path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/current/game_boxscore.xml?gameid=#{game_id}"
+    noko = send_request(path)
+    game_hash(noko)
+
+end
+
+def self.game_hash(noko)
+  game = noko.xpath('gam:gameboxscore')
+  hash = {
+    :away_team => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
+    :home_team => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
+    :away_innings => [],
+    :home_innings => [],
+  }
+  game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
+    hash[:away_innings] << inning.xpath('gam:awayScore').text.to_i
+    hash[:home_innings] << inning.xpath('gam:homeScore').text.to_i
   end
+  away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
+  home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
+  hash[:away_sts] = team_stats(away_stats)
+  hash[:home_sts] = team_stats(home_stats)
+  hash
+end
+
+def self.team_stats(nokofile)
+  {:hits => nokofile.xpath('gam:Hits').text,
+   :doubles => nokofile.xpath('gam:SecondBaseHits').text,
+   :triples => nokofile.xpath('gam:ThirdBaseHits').text,
+   :homers => nokofile.xpath('gam:HomeRuns').text,
+   :rbis => nokofile.xpath('gam:RunsBattedIn').text,
+   :steals => nokofile.xpath('gam:StolenBases').text,
+   :team_avg => nokofile.xpath('gam:BattingAvg').text,
+   :team_ops => nokofile.xpath('gam:BatterOnBasePlusSluggingPct').text,
+   :pitchks => nokofile.xpath('gam:PitcherStrikeouts').text,
+   :teamera => nokofile.xpath('gam:EarnedRunsAllowed').text,
+   :teampip => nokofile.xpath('gam:PitchesPerInning').text
+  }
+end
+
+def self.send_request(path)
+
+  uri = URI(path)
+
+  # Create client
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
+  # Create Request
+  req =  Net::HTTP::Get.new(uri)
+  # Add headers
+  req.basic_auth("b99e7738-3a77-40ef-8dca-a7f62d", "Gc2kw3hcRVreqWy")
+
+  # Fetch Request
+  res = http.request(req).body
+  Nokogiri::XML(res)
   
-  def self.send_request(path)
+end
 
-    uri = URI(path)
-
-    # Create client
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-
-    # Create Request
-    req =  Net::HTTP::Get.new(uri)
-    # Add headers
-    req.basic_auth("#{ENV[Sportsfeed_key]}", "#{ENV[Sportsfeed_pw]}")
-
-    # Fetch Request
-    res = http.request(req).body
-    Nokogiri::XML(res)
-    
-  end
 
 end

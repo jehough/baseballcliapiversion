@@ -1,3 +1,4 @@
 class Baseballcliapiversion::Player
-def initialize
+    attr_accessor :name
+    def initialize
 end
