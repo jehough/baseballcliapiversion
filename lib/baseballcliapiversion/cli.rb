@@ -29,5 +29,27 @@ class Baseballcliapiversion::Cli
         end
     end
 
+    def get_user_input
+        puts "Select a game to see more information"
+        @input = gets.chomp
+        validate_input
+    end
+
+    def validate_input
+        if (@input.to_i <= Baseballcliapiversion.Game.all.length && @input.to_i > 0)
+            game = get_game_info
+            create_table(game)
+        else
+            puts "Sorry I didn't understand that, please select a game by number."
+            get_user_input
+        end
+    end
+
+    def get_game_info
+        Baseballcliapiversion::Game.find_by_id(@input)
+    end
+    
+    def create_table(game)
+    end
     
 end
