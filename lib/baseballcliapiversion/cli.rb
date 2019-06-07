@@ -1,0 +1,3 @@
+class Baseballcliapiversion::Cli
+    
+end
