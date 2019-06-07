@@ -24,22 +24,28 @@ end
 def self.player_hash(noko)
   away_team = noko.xpath('gam:gameboxscore').xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text
   home_team = noko.xpath('gam:gameboxscore').xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text
-    hash = {"#{away_team}" => [],
+  
+  hash = {"#{away_team}" => [],
     "#{home_team}" => []
-    }
+    }  
+  
     noko.xpath('gam:gameboxscore').xpath('gam:awayTeam').xpath('gam:awayPlayers').xpath('gam:playerEntry').each do |player|
       player_stats = create_player_hash(player)
       hash["#{away_team}"] << player_stats
     end
+
     noko.xpath('gam:gameboxscore').xpath('gam:homeTeam').xpath('gam:homePlayers').xpath('gam:playerEntry').each do |player|
       player_stats = create_player_hash(player)
       hash["#{home_team}"] << player_stats
     end
+
   hash
+
 end
 
 def self.create_player_hash(player)
-  player_stats = {:name =>  player.xpath('gam:player').xpath('gam:FirstName').text + " " + player.xpath('gam:player').xpath('gam:LastName').text,
+  player_stats = {
+        :name =>  player.xpath('gam:player').xpath('gam:FirstName').text + " " + player.xpath('gam:player').xpath('gam:LastName').text,
         :at_bats => player.xpath('gam:stats').xpath('gam:AtBats').text,
         :hits => player.xpath('gam:stats').xpath('gam:Hits').text,
         :runs => player.xpath('gam:stats').xpath('gam:Runs').text,
@@ -134,17 +140,15 @@ def self.send_request(path)
 
   uri = URI(path)
 
-  # Create client
+
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = true
   http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
-  # Create Request
+
   req =  Net::HTTP::Get.new(uri)
-  # Add headers
   req.basic_auth("b99e7738-3a77-40ef-8dca-a7f62d", "Gc2kw3hcRVreqWy")
 
-  # Fetch Request
   res = http.request(req).body
   Nokogiri::XML(res)
   
