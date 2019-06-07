@@ -12,6 +12,18 @@ class Baseballcliapiversion::Game
         end
     end
     
+    def self.create_teams
+        self.all.each do |game|
+            game_id = game.game_id
+            hash = Baseballcliapiversion::Api.get_boxes(game_id)
+            away = hash[away_sts]
+            home = hash[home_sts]
+            @away_team = Baseballcliapiversion::Team.create_from_hash(away)
+            @home_team = Baseballcliapiversion::Team.create_from_hash(home)
+            @away_team.game_id = game
+            @home_team.game_id = game
+        end
+
     def save
         self.class.all << self
     end
