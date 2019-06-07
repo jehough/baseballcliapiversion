@@ -1,6 +1,9 @@
 require "baseballcliapiversion/version"
 require "nokogiri"
 require "dotenv/load"
+require 'net/http'
+require 'net/https'
+require 'uri'
 
 require_relative "baseballcliapiversion/api"
 require_relative "baseballcliapiversion/games"
