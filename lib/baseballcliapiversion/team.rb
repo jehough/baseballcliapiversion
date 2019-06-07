@@ -14,6 +14,16 @@ class Baseballcliapiversion::Team
         end
     end
 
+    def self.create_players
+        self.all.each do |team|
+            player_hash = Baseballcliapiversion::Api.get_players(team.game_id)
+            player_hash[team.name].each do |player|
+                play = Baseballcliapiversion::Player.create_from_hash(player)
+                play.team = team
+            end
+        end
+    end
+    
     def save
         self.class.all << self
     end
@@ -21,5 +31,6 @@ class Baseballcliapiversion::Team
     def self.all
         @@all
     end
+
 
 end
