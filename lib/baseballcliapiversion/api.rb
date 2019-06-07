@@ -4,7 +4,7 @@ class Baseballcliapiversion::Api
 def self.get_games
   d = Time.now - 86400
   date = d.strftime('%Y%m%d')
-  path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/2019-regular/scoreboard.xml?fordate=20190605"
+  path = "https://api.mysportsfeeds.com/v1.2/pull/mlb/2019-regular/scoreboard.xml?fordate=#{date}"
   send_request(path)
 end
 
