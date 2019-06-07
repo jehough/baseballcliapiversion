@@ -23,7 +23,8 @@ class Baseballcliapiversion::Game
             @away_team.game_id = game
             @home_team.game_id = game
         end
-
+    end
+    
     def save
         self.class.all << self
     end

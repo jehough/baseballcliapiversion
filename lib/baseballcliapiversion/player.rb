@@ -1,11 +1,11 @@
 class Baseballcliapiversion::Player
     attr_accessor :name, 
-    def initialize
-    end
+    @@all = []
 
     def self.create_from_hash(player_hash)
         player = Player.new
         player.attrs_from_hash(player_hash)
+        player.save
     end
 
     def attrs_from_hash(player_hash)
@@ -14,4 +14,11 @@ class Baseballcliapiversion::Player
         end
     end
 
+    def save
+        self.class.all << self
+    end
+
+    def self.all
+        @@all
+    end
 end
