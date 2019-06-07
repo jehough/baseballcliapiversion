@@ -75,7 +75,40 @@ def self.game_hash(noko)
     hash[:away_team][:innings] << inning.xpath('gam:awayScore').text.to_i
     hash[:home_team][:innings] << inning.xpath('gam:homeScore').text.to_i
   end
+  away_stats = game.xpath('gam:awayTeam').xpadef self.game_hash(noko)
+  game = noko.xpath('gam:gameboxscore')
   away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
+  home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
+  hash = {
+    :away_sts => {},
+    :home_sts => {}
+  }
+  hash[:away_sts] = team_stats(away_stats)
+  hash[:home_sts] = team_stats(home_stats)
+  game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
+    hash[:away_sts][:innings] << inning.xpath('gam:awayScore').text.to_i
+    hash[:home_sts][:innings] << inning.xpath('gam:homeScore').text.to_i
+  end
+  hash[:away_sts][:name] = game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text
+  hash[:home_sts][:name] = game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text
+  hash
+end
+
+def self.team_stats(nokofile)
+  { :innings => [],
+    :hits => nokofile.xpath('gam:Hits').text,
+   :doubles => nokofile.xpath('gam:SecondBaseHits').text,
+   :triples => nokofile.xpath('gam:ThirdBaseHits').text,
+   :homers => nokofile.xpath('gam:HomeRuns').text,
+   :rbis => nokofile.xpath('gam:RunsBattedIn').text,
+   :steals => nokofile.xpath('gam:StolenBases').text,
+   :team_avg => nokofile.xpath('gam:BattingAvg').text,
+   :team_ops => nokofile.xpath('gam:BatterOnBasePlusSluggingPct').text,
+   :pitchks => nokofile.xpath('gam:PitcherStrikeouts').text,
+   :teamera => nokofile.xpath('gam:EarnedRunsAllowed').text,
+   :teampip => nokofile.xpath('gam:PitchesPerInning').text
+  }
+endth('gam:awayTeamStats')
   home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
   hash[:away_team][:away_sts] = team_stats(away_stats)
   hash[:home_team][:home_sts] = team_stats(home_stats)
