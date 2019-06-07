@@ -1,3 +1,0 @@
-class Baseballcliapiversion::Games
-
-end

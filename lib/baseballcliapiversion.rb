@@ -1,5 +1,5 @@
 require "baseballcliapiversion/version"
-require "httparty"
+require "nokogiri"
 require "dotenv/load"
 
 require_relative "baseballcliapiversion/api"
