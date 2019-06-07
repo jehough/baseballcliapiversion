@@ -67,13 +67,13 @@ def self.game_hash(noko)
   game = noko.xpath('gam:gameboxscore')
   hash = {
     :away_team => {:name => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
-    :away_innings => []},
+    :innings => []},
     :home_team => {:name => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
-    :home_innings => []}
+    :innings => []}
   }
   game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
-    hash[:away_team][:away_innings] << inning.xpath('gam:awayScore').text.to_i
-    hash[:home_team][:home_innings] << inning.xpath('gam:homeScore').text.to_i
+    hash[:away_team][:innings] << inning.xpath('gam:awayScore').text.to_i
+    hash[:home_team][:innings] << inning.xpath('gam:homeScore').text.to_i
   end
   away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
   home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
