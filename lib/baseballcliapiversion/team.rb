@@ -13,7 +13,7 @@ class Baseballcliapiversion::Team
     
     def attrs_from_hash(hash)
         hash.each do |k,v|
-            send ("#{k}=", v)
+            send("#{k}=", v)
         end
     end
 

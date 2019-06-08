@@ -10,7 +10,7 @@ class Baseballcliapiversion::Player
 
     def attrs_from_hash(player_hash)
         player_hash.each do |k , v|
-            send ("#{k}=",v)
+            send("#{k}=",v)
         end
     end
 

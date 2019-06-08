@@ -22,7 +22,7 @@ class Baseballcliapiversion::Game
             @home_team = Baseballcliapiversion::Team.create_from_hash(home)
             @away_team.game_id = game
             @home_team.game_id = game
-            game.name = @away_team.name + " vs " @home_team.name
+            game.name = @away_team.name + " vs " + @home_team.name
         end
     end
     
