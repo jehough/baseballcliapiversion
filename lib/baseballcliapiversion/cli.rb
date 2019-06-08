@@ -53,8 +53,8 @@ class Baseballcliapiversion::Cli
     end
     
     def create_table(game)
-        away = game.away_innings_array
-        home = game.home_innings_array
+        away = game.away_team.print_inning
+        home = game.home_team.print_inning
         table = TTY::Table.new ['Team', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Final'], [away, home]
         puts table.render(:unicode)
     end

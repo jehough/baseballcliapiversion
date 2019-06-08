@@ -44,13 +44,5 @@ class Baseballcliapiversion::Game
         @@all
     end
     
-    def away_innings_array
-        away = @away_team.innings.unshift(@away_team.name)
-        away.push(away_team.final)
-    end
 
-    def home_innings_array
-        home = @home_team.innings.unshift(@home_team.name)
-        home.push(home_team.final)
-    end
 end

@@ -1,11 +1,12 @@
 
 class Baseballcliapiversion::Team
-    attr_accessor :name, :game, :hits, :doubles, :triples, :homers, :rbis, :steals, :team_avg, :team_ops, :pitchks, :teamera, :teampip, :innings, :final, :players
+    attr_accessor :name, :game, :hits, :doubles, :triples, :homers, :rbis, :steals, :team_avg, :team_ops, :pitchks, :teamera, :teampip, :innings, :final, :players, :print_inning
     @@all = []
     
     def self.create_from_hash(hash)
         team = self.new
         team.attrs_from_hash(hash)
+        team.innings_array
         team.save
         team
     end    
@@ -28,18 +29,16 @@ class Baseballcliapiversion::Team
         end
     end
 
-    def final_score
-        score = 0
-        self.innings.each {|i| score += i.to_i}
-        score.to_s
-    end
-
     def save
         self.class.all << self
     end
 
     def self.all
         @@all
+    end
+
+    def innings_array
+        @print_inning = self.innings.unshift(self.name).push(self.final)
     end
 
 
