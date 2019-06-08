@@ -86,6 +86,38 @@ class Baseballcliapiversion::Cli
         end
     end
         
+    def team_stats(game)
+        away = game.away_team
+        home = game.home_team
+        table = TTY::Table.new ["Team", "Hits", "Doubles", "Triples", "HRs", "RBIs", "Steals", "AVG", "OPS", "Ks", "ERA", "PPI"] [[away.name, away.hits, away.doubles, away.triples, away.homers, away.rbis, away.steals, away.team_avg, away.team_ops, away.pitchks, away.teamera, away.teampip],[home.name, home.hits, home.doubles, home.triples, home.homers, home.rbis, home.steals, home.team_avg, home.team_ops, home.pitchks, home.teamera, home.teampip]]
+        puts table.render(:unicode)
+        last_line
+    end
 
-    
+    def player_stats(team)
+        stats = team.players.collect do |player|
+            [player.name,
+             player.at_bats,
+             player.hits,
+             player.runs,
+             player.rbis,
+             player.bb,
+             player.k,
+             player.ip,
+             player.hits_allowed,
+             player.runs_allowed,
+             player.earned_runs,
+             player.walks_allowed,
+             player.SO
+             player.hr_allowed]
+            end
+        table = TTY::Table.new ["Name", "AB", "Hits", "Runs", "RBIs", "Walks", "Ks", "IP", "Hits Allowed", "Walks Allowed", "Strikeouts", "HR Allowed"],stats
+        puts table.render(:unicode)
+        last_line
+    end
+
+    def last_line
+        puts "Press enter to return to games or type exit to leave"
+        @input = gets.chomp
+    end
 end
