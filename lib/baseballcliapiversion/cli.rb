@@ -39,6 +39,7 @@ class Baseballcliapiversion::Cli
         if (@input.to_i <= Baseballcliapiversion.Game.all.length && @input.to_i > 0)
             game = get_game_info
             create_table(game)
+            second_stage(game)
         else
             puts "Sorry I didn't understand that, please select a game by number."
             get_user_input
@@ -50,6 +51,41 @@ class Baseballcliapiversion::Cli
     end
     
     def create_table(game)
+        away = game.away_team.innings.unshift(game.away_team.name)
+        home = game.home_team.innings.unshift(game.home_team.name)
+        table = TTY::Table.new ['Team', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Final'], [away, home]
+        puts table.render(:unicode)
     end
+
+    def second_stage(game)
+        puts "Select a number to see more info or type exit to leave:"
+        puts "1. Team stats"
+        puts "2. #{game.away_team.name} player stats"
+        puts "3. #{game.home_team.name} player stats"
+        puts "4. Go back to the list of games"
+        @input = gets.chomp
+        second_validate(game)
+    end
+
+    def second_validate(game)
+        if @input == '1'
+            team_stats(game)
+        elsif @input == '2'
+            team = game.away_team
+            player_stats(team)
+        elsif @input == '3'
+            team = game.home_team
+            player_stats(team)
+        elsif @input == '4'
+            list_games
+            get_user_input
+        else 
+            puts "I'm sorry, I didn't get that, please start again"
+            list_games
+            get_user_input
+        end
+    end
+        
+
     
 end

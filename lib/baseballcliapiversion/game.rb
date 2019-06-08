@@ -26,6 +26,10 @@ class Baseballcliapiversion::Game
         end
     end
     
+    def self.find_by_id(input)
+        index = input.to_i - 1
+        self.all[index]
+    end
 
     def save
         self.class.all << self
