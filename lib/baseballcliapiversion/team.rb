@@ -6,7 +6,6 @@ class Baseballcliapiversion::Team
     def self.create_from_hash(hash)
         team = self.new
         team.attrs_from_hash(hash)
-        @final = team.final_score
         team.save
         team
     end    

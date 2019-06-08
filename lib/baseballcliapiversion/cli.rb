@@ -51,8 +51,8 @@ class Baseballcliapiversion::Cli
     end
     
     def create_table(game)
-        away = game.away_team.innings.unshift(game.away_team.name).push(game.away_team.final)
-        home = game.home_team.innings.unshift(game.home_team.name).push(game.away_team.final)
+        away = game.away_innings_array
+        home = game.home_innings_array
         table = TTY::Table.new ['Team', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Final'], [away, home]
         puts table.render(:unicode)
     end
@@ -89,7 +89,7 @@ class Baseballcliapiversion::Cli
     def team_stats(game)
         away = game.away_team
         home = game.home_team
-        table = TTY::Table.new ["Team", "Hits", "Doubles", "Triples", "HRs", "RBIs", "Steals", "AVG", "OPS", "Ks", "ERA", "PPI"] [[away.name, away.hits, away.doubles, away.triples, away.homers, away.rbis, away.steals, away.team_avg, away.team_ops, away.pitchks, away.teamera, away.teampip],[home.name, home.hits, home.doubles, home.triples, home.homers, home.rbis, home.steals, home.team_avg, home.team_ops, home.pitchks, home.teamera, home.teampip]]
+        table = TTY::Table.new ["Team", "Hits", "Doubles", "Triples", "HRs", "RBIs", "Steals", "AVG", "OPS", "Ks", "ERA", "PPI"],[[away.name, away.hits, away.doubles, away.triples, away.homers, away.rbis, away.steals, away.team_avg, away.team_ops, away.pitchks, away.teamera, away.teampip],[home.name, home.hits, home.doubles, home.triples, home.homers, home.rbis, home.steals, home.team_avg, home.team_ops, home.pitchks, home.teamera, home.teampip]]
         puts table.render(:unicode)
         last_line
     end
@@ -106,12 +106,10 @@ class Baseballcliapiversion::Cli
              player.ip,
              player.hits_allowed,
              player.runs_allowed,
-             player.earned_runs,
-             player.walks_allowed,
              player.SO,
              player.hr_allowed]
             end
-        table = TTY::Table.new ["Name", "AB", "Hits", "Runs", "RBIs", "Walks", "Ks", "IP", "Hits Allowed", "Walks Allowed", "Strikeouts", "HR Allowed"],stats
+        table = TTY::Table.new ["Name", "AB", "Hits", "Runs", "RBIs", "Walks", "Ks", "IP", "Hits Allowed", "Runs Allowed", "Strikeouts", "HR Allowed"],stats
         puts table.render(:unicode)
         last_line
     end
