@@ -7,7 +7,6 @@ class Baseballcliapiversion::Team
         team = self.new
         team.attrs_from_hash(hash)
         @final = team.final_score
-        @players = []
         team.save
         team
     end    
@@ -20,6 +19,7 @@ class Baseballcliapiversion::Team
 
     def self.create_players
         self.all.each do |team|
+            team.players = []
             player_hash = Baseballcliapiversion::Api.get_players(team.game.game_id)
             player_hash[team.name].each do |player|
                 play = Baseballcliapiversion::Player.create_from_hash(player)
@@ -32,6 +32,7 @@ class Baseballcliapiversion::Team
     def final_score
         score = 0
         self.innings.each {|i| score += i.to_i}
+        score.to_s
     end
 
     def save

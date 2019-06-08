@@ -36,7 +36,7 @@ class Baseballcliapiversion::Cli
     end
 
     def validate_input
-        if (@input.to_i <= Baseballcliapiversion.Game.all.length && @input.to_i > 0)
+        if (@input.to_i <= Baseballcliapiversion::Game.all.length && @input.to_i > 0)
             game = get_game_info
             create_table(game)
             second_stage(game)
@@ -51,8 +51,8 @@ class Baseballcliapiversion::Cli
     end
     
     def create_table(game)
-        away = game.away_team.innings.unshift(game.away_team.name)
-        home = game.home_team.innings.unshift(game.home_team.name)
+        away = game.away_team.innings.unshift(game.away_team.name).push(game.away_team.final)
+        home = game.home_team.innings.unshift(game.home_team.name).push(game.away_team.final)
         table = TTY::Table.new ['Team', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Final'], [away, home]
         puts table.render(:unicode)
     end

@@ -50,7 +50,7 @@ def self.create_player_hash(player)
         :at_bats => player.xpath('gam:stats').xpath('gam:AtBats').text,
         :hits => player.xpath('gam:stats').xpath('gam:Hits').text,
         :runs => player.xpath('gam:stats').xpath('gam:Runs').text,
-        :rbi => player.xpath('gam:stats').xpath('gam:RunsBattedIn').text,
+        :rbis => player.xpath('gam:stats').xpath('gam:RunsBattedIn').text,
         :bb => player.xpath('gam:stats').xpath('gam:BatterWalks').text,
         :k => player.xpath('gam:stats').xpath('gam:BatterStrikeouts').text,
         :ip => player.xpath('gam:stats').xpath('gam:InningsPitched').text, 
