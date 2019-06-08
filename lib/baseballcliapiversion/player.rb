@@ -3,9 +3,10 @@ class Baseballcliapiversion::Player
     @@all = []
 
     def self.create_from_hash(player_hash)
-        player = Player.new
+        player = self.new
         player.attrs_from_hash(player_hash)
         player.save
+        player
     end
 
     def attrs_from_hash(player_hash)

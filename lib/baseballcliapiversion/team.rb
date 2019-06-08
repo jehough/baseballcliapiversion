@@ -1,6 +1,6 @@
 
 class Baseballcliapiversion::Team
-    attr_accessor :name, :game_id, :hits, :doubles, :triples, :homers, :rbis, :steals, :team_avg, :team_ops, :pitchks, :teamera, :teampip, :innings, :final, :players
+    attr_accessor :name, :game, :hits, :doubles, :triples, :homers, :rbis, :steals, :team_avg, :team_ops, :pitchks, :teamera, :teampip, :innings, :final, :players
     @@all = []
     
     def self.create_from_hash(hash)
@@ -9,6 +9,7 @@ class Baseballcliapiversion::Team
         @final = team.final_score
         @players = []
         team.save
+        team
     end    
     
     def attrs_from_hash(hash)
@@ -19,7 +20,7 @@ class Baseballcliapiversion::Team
 
     def self.create_players
         self.all.each do |team|
-            player_hash = Baseballcliapiversion::Api.get_players(team.game_id)
+            player_hash = Baseballcliapiversion::Api.get_players(team.game.game_id)
             player_hash[team.name].each do |player|
                 play = Baseballcliapiversion::Player.create_from_hash(player)
                 play.team = team
@@ -29,8 +30,8 @@ class Baseballcliapiversion::Team
     end
 
     def final_score
-        score = 
-        self.innings.each {|i| score += i}
+        score = 0
+        self.innings.each {|i| score += i.to_i}
     end
 
     def save

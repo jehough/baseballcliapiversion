@@ -16,13 +16,13 @@ class Baseballcliapiversion::Game
         self.all.each do |game|
             game_id = game.game_id
             hash = Baseballcliapiversion::Api.get_boxes(game_id)
-            away = hash[away_sts]
-            home = hash[home_sts]
+            away = hash[:away_sts]
+            home = hash[:home_sts]
             @away_team = Baseballcliapiversion::Team.create_from_hash(away)
             @home_team = Baseballcliapiversion::Team.create_from_hash(home)
-            @away_team.game_id = game
-            @home_team.game_id = game
-            game.name = @away_team.name + " vs " + @home_team.name
+            @away_team.game = game
+            @home_team.game = game
+            game.name = "#{@away_team.name} vs #{@home_team.name}"
         end
     end
     

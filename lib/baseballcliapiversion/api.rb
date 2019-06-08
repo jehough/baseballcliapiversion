@@ -1,3 +1,4 @@
+
 class Baseballcliapiversion::Api
 
 # Request (GET )
@@ -71,38 +72,35 @@ end
 
 def self.game_hash(noko)
   game = noko.xpath('gam:gameboxscore')
-  hash = {
-    :away_team => {:name => game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text,
-    :innings => []},
-    :home_team => {:name => game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text,
-    :innings => []}
-  }
-  game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
-    hash[:away_team][:innings] << inning.xpath('gam:awayScore').text.to_i
-    hash[:home_team][:innings] << inning.xpath('gam:homeScore').text.to_i
-  end
-  away_stats = game.xpath('gam:awayTeam').xpadef self.game_hash(noko)
-  game = noko.xpath('gam:gameboxscore')
   away_stats = game.xpath('gam:awayTeam').xpath('gam:awayTeamStats')
   home_stats = game.xpath('gam:homeTeam').xpath('gam:homeTeamStats')
   hash = {
-    :away_sts => {},
-    :home_sts => {}
+    :away_sts => "",
+    :home_sts => ""
   }
+
   hash[:away_sts] = team_stats(away_stats)
   hash[:home_sts] = team_stats(home_stats)
+  
+  away = []
+  home = []
+
   game.xpath('gam:inningSummary').xpath('gam:inning').each do |inning|
-    hash[:away_sts][:innings] << inning.xpath('gam:awayScore').text.to_i
-    hash[:home_sts][:innings] << inning.xpath('gam:homeScore').text.to_i
+    away << inning.xpath('gam:awayScore').text
+    home << inning.xpath('gam:homeScore').text
   end
+  hash[:away_sts][:innings] = away
+  hash[:home_sts][:innings] = home
+
   hash[:away_sts][:name] = game.xpath('gam:game').xpath('gam:awayTeam').xpath('gam:Name').text
   hash[:home_sts][:name] = game.xpath('gam:game').xpath('gam:homeTeam').xpath('gam:Name').text
+  
   hash
 end
 
 def self.team_stats(nokofile)
-  { :innings => [],
-    :hits => nokofile.xpath('gam:Hits').text,
+  {:innings => [],
+   :hits => nokofile.xpath('gam:Hits').text,
    :doubles => nokofile.xpath('gam:SecondBaseHits').text,
    :triples => nokofile.xpath('gam:ThirdBaseHits').text,
    :homers => nokofile.xpath('gam:HomeRuns').text,
