@@ -108,7 +108,7 @@ class Baseballcliapiversion::Cli
              player.runs_allowed,
              player.earned_runs,
              player.walks_allowed,
-             player.SO
+             player.SO,
              player.hr_allowed]
             end
         table = TTY::Table.new ["Name", "AB", "Hits", "Runs", "RBIs", "Walks", "Ks", "IP", "Hits Allowed", "Walks Allowed", "Strikeouts", "HR Allowed"],stats
