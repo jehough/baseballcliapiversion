@@ -40,6 +40,8 @@ class Baseballcliapiversion::Cli
             game = get_game_info
             create_table(game)
             second_stage(game)
+        elsif @input == 'exit'
+            @input = 'exit'
         else
             puts "Sorry I didn't understand that, please select a game by number."
             get_user_input
