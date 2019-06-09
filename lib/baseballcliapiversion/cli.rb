@@ -91,8 +91,12 @@ class Baseballcliapiversion::Cli
     def team_stats(game)
         away = game.away_team
         home = game.home_team
-        table = TTY::Table.new ["Team", "Hits", "Doubles", "Triples", "HRs", "RBIs", "Steals", "AVG", "OPS", "Ks", "ERA", "PPI"],[[away.name, away.hits, away.doubles, away.triples, away.homers, away.rbis, away.steals, away.team_avg, away.team_ops, away.pitchks, away.teamera, away.teampip],[home.name, home.hits, home.doubles, home.triples, home.homers, home.rbis, home.steals, home.team_avg, home.team_ops, home.pitchks, home.teamera, home.teampip]]
+        table = TTY::Table.new ["Team", "H", "2B", "3B", "HR", "RBI", "SB", "AVG", "OPS", "K", "ERA", "PPI"],[[away.name, away.hits, away.doubles, away.triples, away.homers, away.rbis, away.steals, away.team_avg, away.team_ops, away.pitchks, away.teamera, away.teampip],[home.name, home.hits, home.doubles, home.triples, home.homers, home.rbis, home.steals, home.team_avg, home.team_ops, home.pitchks, home.teamera, home.teampip]]
         puts table.render(:unicode)
+        puts "Key: H-Hits, 2B - Doubles, 3B - Triples, HR - HomeRuns"
+        puts "RBI - Runs Batted In, SB - Stollen Bases, AVG - Team Batting Average"
+        puts "OPS - Team On-Base Plus Slugging, K - Strikeouts pitched"
+        puts "ERA - Team Earned Run Average, PPI - Team Pitches Per Inning"
         last_line
     end
 
@@ -108,11 +112,17 @@ class Baseballcliapiversion::Cli
              player.ip,
              player.hits_allowed,
              player.runs_allowed,
+             player.earned_runs,
+             player.walks_allowed,
              player.SO,
              player.hr_allowed]
             end
-        table = TTY::Table.new ["Name", "AB", "Hits", "Runs", "RBIs", "Walks", "Ks", "IP", "Hits Allowed", "Runs Allowed", "Strikeouts", "HR Allowed"],stats
+        table = TTY::Table.new ["Name", "AB", "H", "R", "RBI", "BB", "K", "IP", "HA", "RA", "ER","BBA", "PK", "HR"],stats
         puts table.render(:unicode)
+        puts "Key: AB - At Bats, H - Hits, R - Runs, RBI - Runs Batted In"
+        puts "BB - Walks, K- Batter Strikeouts, IP - Innings Pitched, HA - Hits Allowed"
+        puts "RA - Runs Allowed, ER - Earned Runs, BBA- Walks Allowed, PK - Strikeouts Pitched"
+        puts "HR - Home Runs Allowed"
         last_line
     end
 
